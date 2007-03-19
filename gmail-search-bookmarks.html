@@ -1,0 +1,96 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head><title>Gmail Search Bookmarks</title>
+
+
+  
+    
+    <script>
+      function genlink() {
+        var sitetypegmail = document.forms[0].sitetype[0].checked;
+        var sitename = document.forms[0].sitename.value;
+        var https = document.forms[0].https.checked;
+        var query = document.forms[0].q.value;
+        var title = document.forms[0].title.value;
+        
+        var protocol = "";
+        if (https) {
+          protocol = "https";
+        } else {
+          protocol = "http";
+        }
+        var site = "";
+        if (sitetypegmail) {
+          site = "mail.google.com/mail/";
+        } else {
+          site = "mail.google.com/hosted/" + sitename + "/";
+        }
+
+        var link_href = "(function(){" +
+          "var base=\"" + protocol + "://" + site + "\";" +
+          "if(location.href.indexOf(base)==0){" +
+            "var f=window.frames[0].frames[0].document.getElementById(\"s\");"+
+            "var inputs=f.getElementsByTagName(\"input\");" +
+            "var q=null;" +
+            "for(var i=0;i<inputs.length;i++){" +
+              "if(inputs[i].name==\"q\"){q=inputs[i];}" +
+            "}" +
+            "q.value=\"" + query + "\";" +
+            "f.onsubmit();" +
+          "}else{" +
+            "location.href=base+\"?search=query&q=" + 
+              escape(query) + "&view=tl&fs=1\";" +
+          "}" +
+        "})()";
+
+        var output = document.getElementById("output");
+        output.innerHTML = "Here is your link.  Drag it to your bookmark toolbar: " +
+          "<a href=\"javascript:" + escape(link_href) + "\">" + title + "</a>";
+      }
+    </script>
+    <script src="gmail-search-bookmarks_files/urchin.js" type="text/javascript">
+</script>
+<script type="text/javascript">
+_uacct = "UA-50572-1";
+urchinTracker();
+</script></head><body>
+    <h1>Gmail Search Bookmarks</h1>
+
+    <p><a href="http://persistent.info/archives/2005/03/01/gmail-searches">Mihai's
+    saved searches greasemonkey script</a> is great, but in my
+    experience it imposes a noticable overhead on every gmail
+    operation, so I decided to re-create the saved search feature
+    using a bookmark (I think the overhead has been fixed in new versions
+    of the scripts, but my version still has the advantage that it provides 
+    one-click access to your searches when you're not already in gmail).</p>
+
+    <p>It's possible (but not straightforward) to make a normal bookmark that
+      links to a gmail search, but this is not ideal because it reloads the
+      full page and all the javascript, which makes it slow if you're already
+      in gmail.  A javascript bookmarklet can reach
+      into the page and submit the form directly, avoiding the overhead.</p>
+
+    <p>This form will generate a customized bookmarklet for a query of your
+      choice (only tested in firefox).  You queries can use any gmail search 
+      operators.  For example, I use a search for 
+      [(label:inbox label:unread) OR label:star] as my main
+      gmail view, which shows me all unread items from my inbox as well as all 
+      of my starred items.</p>
+
+    <form>
+      Query: <input name="q" value="label:inbox" type="text"><p>
+      Title: <input name="title" value="Gmail search" type="text"> (the title will be used as the name of your bookmark)</p><p>
+      Site (if you use <a href="http://www.google.com/a">Google Apps for your Domain</a> choose "other"
+            and enter your domain): 
+        </p><ul>
+          <li><input name="sitetype" value="gmail" checked="checked" type="radio">gmail.com</li>
+          <li><input name="sitetype" value="other" type="radio">Other: 
+              <input name="sitename" type="text"></li>
+        </ul>
+      Use https: <input name="https" type="checkbox"><p>
+      <button name="generate" onclick="genlink(); return false">Generate</button>
+    
+
+    </p><div id="output">
+    </div>
+
+</form></body></html>
