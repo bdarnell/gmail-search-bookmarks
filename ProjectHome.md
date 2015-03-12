@@ -1,0 +1,1 @@
+A simple tool for generating bookmarklets to perform saved searches on gmail.  When possible, these bookmarklets will use an existing gmail session for efficiency.
